@@ -1,0 +1,24 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/Users/d/Work/my/ChezScheme/a6osx/bin/scheme",
+            "args": ["--script", 
+                    "/Users/d/Work/my/ChezScheme/a6osx/bin/tt.ss"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [{
+                "name": "SCHEMEHEAPDIRS",
+                "value": "/Users/d/Work/my/ChezScheme/a6osx/boot/a6osx"
+            }],
+            "externalConsole": false,
+            "MIMode": "lldb",
+        }
+    ]
+}
