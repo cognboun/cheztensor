@@ -22,6 +22,11 @@ load(
     "tf_copts",
     "tf_gen_op_wrappers_cc",
 )
+load(
+    ":config_chezscheme.bzl",
+    "cs_source_files",
+    "cs_hdrs_files",
+)
 
 cc_library(
     name = "lz4",
@@ -43,46 +48,8 @@ cc_library(
 
 cc_library(
     name = "chezscheme",
-    srcs = [
-            "ChezScheme/a6osx/c/alloc.c",
-            "ChezScheme/a6osx/c/statics.c",
-            "ChezScheme/a6osx/c/segment.c",
-            "ChezScheme/a6osx/c/symbol.c",
-            "ChezScheme/a6osx/c/intern.c",
-            "ChezScheme/a6osx/c/gcwrapper.c",
-            "ChezScheme/a6osx/c/gc-ocd.c",
-            "ChezScheme/a6osx/c/gc-oce.c",
-            "ChezScheme/a6osx/c/number.c",
-            "ChezScheme/a6osx/c/schsig.c",
-            "ChezScheme/a6osx/c/io.c",
-            "ChezScheme/a6osx/c/new-io.c",
-            "ChezScheme/a6osx/c/print.c",
-            "ChezScheme/a6osx/c/fasl.c",
-            "ChezScheme/a6osx/c/stats.c",
-            "ChezScheme/a6osx/c/foreign.c",
-            "ChezScheme/a6osx/c/prim.c",
-            "ChezScheme/a6osx/c/prim5.c",
-            "ChezScheme/a6osx/c/flushcache.c",
-            "ChezScheme/a6osx/c/schlib.c",
-            "ChezScheme/a6osx/c/thread.c",
-            "ChezScheme/a6osx/c/expeditor.c",
-            "ChezScheme/a6osx/c/scheme.c",
-            "ChezScheme/a6osx/c/compress-io.c",
-            "ChezScheme/a6osx/c/i3le.c"],
-    hdrs = [
-            "ChezScheme/a6osx/c/gc.inc",
-            "ChezScheme/a6osx/c/system.h",
-            "ChezScheme/a6osx/c/version.h",
-            "ChezScheme/a6osx/c/config.h",
-            "ChezScheme/a6osx/c/thread.h",
-            "ChezScheme/a6osx/c/compress-io.h",
-            "ChezScheme/a6osx/c/globals.h",
-            "ChezScheme/a6osx/c/externs.h",
-            "ChezScheme/a6osx/c/segment.h",
-            "ChezScheme/a6osx/c/types.h",
-            "ChezScheme/a6osx/c/sort.h",
-            "ChezScheme/a6osx/boot/a6osx/scheme.h",
-            "ChezScheme/a6osx/boot/a6osx/equates.h"],
+    srcs = cs_source_files(),
+    hdrs = cs_hdrs_files(),
     copts = tf_copts() + ["-DX86_64"],
     deps = [
         ":lz4",
