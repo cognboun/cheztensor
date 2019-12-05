@@ -1,6 +1,6 @@
-# chezscheme_for_tensorflow
+# Chezscheme For Tensorflow
 
-chezscheme for tensorflow
+chezscheme tensorflow binding
 
 ### Build on Tensorflow
 
