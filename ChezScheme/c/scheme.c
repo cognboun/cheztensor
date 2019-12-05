@@ -78,7 +78,11 @@ static void main_init() {
 #ifdef FEATURE_EXPEDITOR
     S_expeditor_init();
 #endif /* FEATURE_EXPEDITOR */
+
+#ifdef FEATURE_TENSORFLOW
+    // FEATURE_TENSORFLOW
     S_tensorflow_init();
+#endif /* FEATURE_TENSORFLOW */
 
     if (!S_boot_time) return;
 

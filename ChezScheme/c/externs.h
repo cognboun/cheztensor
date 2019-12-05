@@ -400,5 +400,11 @@ extern void S_expeditor_init PROTO((void));
 /* statics.c */
 extern void scheme_statics();
 
-/* tensorflow.c */
+
+#ifdef FEATURE_TENSORFLOW
+
+/* FEATURE_TENSORFLOW tensorflow.c */
 extern void S_tensorflow_init PROTO((void));
+
+#endif /* FEATURE_TENSORFLOW */
+

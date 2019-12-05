@@ -34,9 +34,9 @@ limitations under the License.
 #include "tensorflow/core/public/session.h"
 
 
-#include "tensorflow/chezscheme/ChezScheme/a6osx/boot/a6osx/scheme.h"
-#include "tensorflow/chezscheme/ChezScheme/a6osx/c/config.h"
-#include "tensorflow/chezscheme/ChezScheme/a6osx/c/system.h"
+#include "tensorflow/chezscheme/ChezScheme/scheme.h"
+#include "tensorflow/chezscheme/ChezScheme/c/config.h"
+#include "tensorflow/chezscheme/ChezScheme/c/system.h"
 
 
 using tensorflow::string;

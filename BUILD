@@ -46,22 +46,16 @@ cc_library(
     copts = tf_copts() + ["-DX86_64"],
 )    
 
-cc_library(
-    name = "chezscheme",
-    srcs = [":test_ccs"],
-    hdrs = [":test_ccs"],
-    copts = tf_copts() + ["-DX86_64"],
-    deps = [
-        ":lz4",
-    ],
-)
-
 genrule(
-        name = "test_ccs",
+        name = "config_chezscheme",
             srcs = [],
-            outs = ["alloc.c"],
+            outs = ["bin/run.sh",
+                    "bin/scheme",
+                    "boot/equates.h",
+                    "boot/scheme.h",
+                    "boot/petite.boot",
+                    "boot/scheme.boot"],
             cmd = """
-
             threads=yes
             CONFIG_UNAME=`uname`
 
@@ -146,16 +140,41 @@ genrule(
         else
             if [ $$threads = yes ] ; then m=$$tm32 ; else m=$$m32 ; fi
         fi
-        echo \"aaaaaaaaaaaaaaaaaaa $$m aaaaaaaaaaaa\"
+
         cd tensorflow/chezscheme/ChezScheme
-        ./configure --threads
-        pwd
+        ./configure CPPFLAGS=-DFEATURE_TENSORFLOW --threads
+        make
+        ln -s $$m tf_chezscheme
         cd -
-        ls tensorflow/chezscheme/ChezScheme/$$m/c
-        cp tensorflow/chezscheme/ChezScheme/$$m/c/alloc.c $(@D)
+
+        for f in $(OUTS); do
+            if [[ ! $$f =~ run.sh ]]; then
+                if [[ $$f =~ bin/scheme ]]; then
+                    cp tensorflow/chezscheme/ChezScheme/$$m/bin/$${f##*/} $(@D)/bin
+                else
+                    cp tensorflow/chezscheme/ChezScheme/$$m/boot/$$m/$${f##*/} $(@D)/boot
+                fi
+            fi
+        done
+
+        echo \"\"\"
+        ./scheme -b ../boot/petite.boot -b ../boot/scheme.boot
+        \"\"\" > $(@D)/bin/run.sh
+
         """,
             visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "chezscheme",
+    srcs = [":config_chezscheme"],
+    #hdrs = [":config_chezscheme"],
+    copts = tf_copts() + ["-DX86_64"],
+    deps = [
+        ":lz4",
+    ],
+)
+
 
 cc_library(
     name = "chezscheme_for_tensorflow",
