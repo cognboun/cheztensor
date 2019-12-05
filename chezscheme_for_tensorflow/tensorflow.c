@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "tensorflow/chezscheme/ChezScheme/c/system.h"
+#include "system.h"
 #include "tf_util.h"
 
 IBOOL S_tf_test(followp) IBOOL followp; {

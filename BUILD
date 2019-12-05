@@ -2,7 +2,12 @@
 # ChezScheme support for TensorFlow.
 #
 # Public targets:
+#  gen_chezscheme_source
 #  tf_chezscheme
+#
+# Usage:
+# bazel build -c opt --verbose_failures //tensorflow/chezscheme:gen_chezscheme_source
+# bazel build -c opt --verbose_failures//tensorflow/chezscheme:tf_chezscheme
 #
 
 package(
@@ -28,35 +33,20 @@ load(
     "cs_hdrs_files",
 )
 
-cc_library(
-    name = "lz4",
-    srcs = [
-            "ChezScheme/lz4/lib/lz4.c",
-            "ChezScheme/lz4/lib/lz4frame.c",
-            "ChezScheme/lz4/lib/lz4hc.c",
-            "ChezScheme/lz4/lib/xxhash.c",
-    ],
-    hdrs = [
-            "ChezScheme/lz4/lib/lz4.h",
-            "ChezScheme/lz4/lib/lz4.inc",
-            "ChezScheme/lz4/lib/lz4frame.h",
-            "ChezScheme/lz4/lib/lz4hc.h",
-            "ChezScheme/lz4/lib/xxhash.h",
-    ],
-    copts = tf_copts() + ["-DX86_64"],
-)    
-
 genrule(
-        name = "config_chezscheme",
-            srcs = [],
-            outs = ["bin/run.sh",
-                    "bin/scheme",
-                    "boot/equates.h",
-                    "boot/scheme.h",
-                    "boot/petite.boot",
-                    "boot/scheme.boot"],
-            cmd = """
+    name = "gen_chezscheme_source",
+    srcs = [],
+    outs = ["bin/run.sh",
+            "bin/scheme",
+            "boot/equates.h",
+            "boot/scheme.h",
+            "boot/petite.boot",
+            "boot/scheme.boot"],
+    cmd = """
+
             threads=yes
+            #threads=no
+
             CONFIG_UNAME=`uname`
 
             case \"$$CONFIG_UNAME\" in
@@ -141,11 +131,17 @@ genrule(
             if [ $$threads = yes ] ; then m=$$tm32 ; else m=$$m32 ; fi
         fi
 
+        if [ $$threads = yes ] ; then THREADOPT=\"--threads\" ; else THREADOPT=\"\" ; fi
+
         cd tensorflow/chezscheme/ChezScheme
-        ./configure CPPFLAGS=-DFEATURE_TENSORFLOW --threads
+        ./configure CPPFLAGS=-DFEATURE_TENSORFLOW $$THREADOPT
         make
+        # create logical path
         ln -s $$m tf_chezscheme
-        cd -
+        cd tf_chezscheme/boot
+        ln -s $$m tf_boot
+        cd ../../
+        cd ../../../
 
         for f in $(OUTS); do
             if [[ ! $$f =~ run.sh ]]; then
@@ -166,10 +162,30 @@ genrule(
 )
 
 cc_library(
-    name = "chezscheme",
-    srcs = [":config_chezscheme"],
-    #hdrs = [":config_chezscheme"],
+    name = "lz4",
+    srcs = [
+            "ChezScheme/lz4/lib/lz4.c",
+            "ChezScheme/lz4/lib/lz4frame.c",
+            "ChezScheme/lz4/lib/lz4hc.c",
+            "ChezScheme/lz4/lib/xxhash.c",
+    ],
+    hdrs = [
+            "ChezScheme/lz4/lib/lz4.h",
+            "ChezScheme/lz4/lib/lz4.inc",
+            "ChezScheme/lz4/lib/lz4frame.h",
+            "ChezScheme/lz4/lib/lz4hc.h",
+            "ChezScheme/lz4/lib/xxhash.h",
+    ],
     copts = tf_copts() + ["-DX86_64"],
+)
+
+cc_library(
+    name = "chezscheme",
+    srcs = cs_source_files(),
+    hdrs = cs_hdrs_files(),
+    copts = tf_copts() + ["-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/boot/tf_boot/",
+                          "-I./tensorflow/chezscheme/ChezScheme/lz4/lib/"]
+                       + ["-DFEATURE_TENSORFLOW", "-DX86_64"],
     deps = [
         ":lz4",
     ],
@@ -184,7 +200,9 @@ cc_library(
     hdrs = [
             "chezscheme_for_tensorflow/tf_util.h",
     ],
-    copts = tf_copts() + ["-DX86_64"],
+    copts = tf_copts() + ["-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/c/",
+                          "-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/boot/tf_boot/",]
+                       + ["-DX86_64"],
     deps = [
         ":chezscheme",
         "//tensorflow/core:tensorflow",
@@ -195,7 +213,9 @@ cc_library(
 tf_cc_binary(
     name = "tf_chezscheme",
     srcs = ["tf_chezscheme.c"],
-    copts = tf_copts() + ["-DX86_64"],
+    copts = tf_copts() + ["-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/c/",
+                          "-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/boot/tf_boot/",]
+                       + ["-DX86_64"],
     linkopts = select({
         "//tensorflow:macos": [
             "-lm",

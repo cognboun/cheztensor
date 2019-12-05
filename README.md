@@ -2,6 +2,25 @@
 
 chezscheme for tensorflow
 
+### Build on Tensorflow
+
+* shell
+```
+bazel build -c opt //tensorflow/chezscheme:gen_chezscheme_source
+bazel build -c opt //tensorflow/chezscheme:tf_chezscheme
+
+./bazel-bin/tensorflow/chezscheme/tf_chezscheme -b ./bazel-bin/tensorflow/chezscheme/boot/petite.boot -b ./bazel-bin/tensorflow/chezscheme/boot/scheme.boot
+
+```
+    
+* just
+```
+just file:
+
+build_chezscheme build_opt=DEFAULT_BUILD_OPT:
+	@echo "export TF_CPP_MIN_VLOG_LEVEL=5; ./bazel-bin/tensorflow/chezscheme/tf_chezscheme -b ./bazel-bin/tensorflow/chezscheme/boot/petite.boot -b ./bazel-bin/tensorflow/chezscheme/boot/scheme.boot  --num_concurrent_sessions=1 --num_concurrent_steps=1 --num_iterations=1"
+```
+
 ### todolist
 - [ ]  Tensorflow bind Chezscheme
 	- [ ] validation tensorflow c_api or c++ api

@@ -32,8 +32,9 @@ limitations under the License.
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "tensorflow/chezscheme/ChezScheme/a6osx/boot/a6osx/scheme.h"
-#include "tensorflow/chezscheme/ChezScheme/a6osx/c/config.h"
+#include "scheme.h"
+#include "config.h"
+
 #include "tensorflow/chezscheme/chezscheme_for_tensorflow/tf_util.h"
 
 /****
