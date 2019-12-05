@@ -6,7 +6,7 @@ chezscheme tensorflow binding
 
 * download Tensorflow source code
 
-* '''git clone https://github.com/cognboun/chezscheme_for_tensorflow.git''' in tensorflow/tensorflow
+* ```git clone https://github.com/cognboun/chezscheme_for_tensorflow.git``` in tensorflow/tensorflow
 
 * rename chezscheme_for_tensorflow chezscheme
 
