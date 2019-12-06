@@ -1,4 +1,4 @@
-# Chezscheme For Tensorflow
+# ChezScheme For Tensorflow
 
 chezscheme tensorflow binding
 
