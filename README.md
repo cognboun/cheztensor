@@ -1,6 +1,6 @@
 # Cheztensor
 
-ChezScheme Tensorflow Binding
+ChezScheme Tensorflow Bindings
 
 ### Build on Tensorflow
 
@@ -28,10 +28,10 @@ build_chezscheme build_opt=DEFAULT_BUILD_OPT:
 ```
 
 ### todolist
-- [ ]  Tensorflow bind Chezscheme
+- [ ]  Tensorflow bindings Chezscheme
 	- [ ] validation tensorflow c_api or c++ api
 	- [ ] develop tensorflow base function
-	- [ ] develop chezscheme bind function
+	- [ ] develop chezscheme bindings function
 	- [ ] chezscheme wrapper
 	- [ ] chezscheme mathematical environment base on tensorflow
 	- [ ] chezscheme tensorflow environment
