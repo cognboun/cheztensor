@@ -22,13 +22,17 @@ exports_files(["LICENSE"])
 
 load(
     "//tensorflow:tensorflow.bzl",
+    "VERSION",
     "tf_cc_test",
     "tf_cc_binary",
     "tf_copts",
     "tf_gen_op_wrappers_cc",
+    "tf_cc_shared_object",
 )
 load(
     ":config_chezscheme.bzl",
+    "lz4_source_file",
+    "lz4_hdrs_file",
     "cs_source_files",
     "cs_hdrs_files",
 )
@@ -163,19 +167,8 @@ genrule(
 
 cc_library(
     name = "lz4",
-    srcs = [
-            "ChezScheme/lz4/lib/lz4.c",
-            "ChezScheme/lz4/lib/lz4frame.c",
-            "ChezScheme/lz4/lib/lz4hc.c",
-            "ChezScheme/lz4/lib/xxhash.c",
-    ],
-    hdrs = [
-            "ChezScheme/lz4/lib/lz4.h",
-            "ChezScheme/lz4/lib/lz4.inc",
-            "ChezScheme/lz4/lib/lz4frame.h",
-            "ChezScheme/lz4/lib/lz4hc.h",
-            "ChezScheme/lz4/lib/xxhash.h",
-    ],
+    srcs = lz4_source_file(),
+    hdrs = lz4_hdrs_file(),
     copts = tf_copts() + ["-DX86_64"],
 )
 
@@ -193,6 +186,15 @@ cc_library(
 
 
 cc_library(
+    name = "one_chezscheme",
+    srcs = cs_source_files() + lz4_source_file(),
+    hdrs = cs_hdrs_files() + lz4_hdrs_file(),
+    copts = tf_copts() + ["-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/boot/tf_boot/",
+                          "-I./tensorflow/chezscheme/ChezScheme/lz4/lib/"]
+                       + ["-DFEATURE_TENSORFLOW", "-DX86_64"],
+)
+
+cc_library(
     name = "chezscheme_for_tensorflow",
     srcs = [
             "chezscheme_for_tensorflow/tensorflow.c",
@@ -207,8 +209,45 @@ cc_library(
         ":chezscheme",
         "//tensorflow/core:tensorflow",
         "//tensorflow/cc:cc_ops",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:lib",
+        "//tensorflow/core:protos_all_cc",
     ],
 )    
+
+
+tf_cc_shared_object(
+    name = "chezscheme_for_tensorflow_so",
+    linkopts = select({
+        "//tensorflow:macos": [
+            "-Wl",
+        ],
+        "//tensorflow:windows": [],
+        "//conditions:default": [
+            "-z defs",
+            "-Wl",
+        ],
+    }),
+    per_os_targets = True,
+    soversion = VERSION,
+    visibility = ["//visibility:public"],
+    # add win_def_file for tensorflow_cc
+    win_def_file = select({
+        # We need this DEF file to properly export symbols on Windows
+        "//tensorflow:windows": ":tensorflow_filtered_def_file",
+        "//conditions:default": None,
+    }),
+    deps = [
+        ":chezscheme",
+        "//tensorflow/core:tensorflow",
+        "//tensorflow/cc:cc_ops",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:lib",
+        "//tensorflow/core:protos_all_cc",
+    ],
+)
 
 tf_cc_binary(
     name = "tf_chezscheme",
@@ -236,12 +275,5 @@ tf_cc_binary(
     }),
     deps = [
         ":chezscheme_for_tensorflow",
-        "//tensorflow/cc:cc_ops",
-        "//tensorflow/core:core_cpu",
-        "//tensorflow/core:framework",
-        "//tensorflow/core:lib",
-        "//tensorflow/core:protos_all_cc",
-        "//tensorflow/core:tensorflow",
     ],
 )
-
