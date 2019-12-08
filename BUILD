@@ -240,6 +240,7 @@ tf_cc_shared_object(
     }),
     deps = [
         ":chezscheme",
+        ":chezscheme_for_tensorflow",
         "//tensorflow/core:tensorflow",
         "//tensorflow/cc:cc_ops",
         "//tensorflow/core:core_cpu",

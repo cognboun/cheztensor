@@ -333,6 +333,13 @@ void tf_setArg(int argc, char** argv) {
 
 int tf_start() {
 
+  if (s_argc == 0) {
+    s_argc = 2;
+    s_argv = (char**)malloc(sizeof(char*) * 2);
+    s_argv[0] = (char*)malloc(sizeof(char) * 10);
+    s_argv[1] = (char*)malloc(sizeof(char) * 10);
+  }
+  
   int argc = s_argc;
   char** argv = s_argv;
 
