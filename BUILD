@@ -268,13 +268,62 @@ tf_cc_binary(
             "-lm",
             "-lpthread",
         ],
+	# linux
         "//conditions:default": [
             "-lm",
             "-lpthread",
             "-lrt",
+            "-lncurses",
+	    "-luuid",
         ],
     }),
     deps = [
         ":chezscheme_for_tensorflow",
     ],
+)
+
+
+tf_cc_binary(
+    name = "tf_chezscheme_all",
+    srcs = [
+            "tf_chezscheme.c",
+            "chezscheme_for_tensorflow/tensorflow.c",
+            "chezscheme_for_tensorflow/tf_util.cc"],
+
+    copts = tf_copts() + ["-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/c/",
+                          "-I./tensorflow/chezscheme/ChezScheme/tf_chezscheme/boot/tf_boot/",]
+                       + ["-DX86_64"],
+
+    deps = [
+        ":chezscheme",
+        ":chezscheme_for_tensorflow",        
+        "//tensorflow/core:tensorflow",
+        "//tensorflow/cc:cc_ops",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:lib",
+        "//tensorflow/core:protos_all_cc",
+    ],
+
+    linkopts = select({
+        "//tensorflow:macos": [
+            "-lm",
+            "-lpthread",
+            "-liconv",
+            "-lm",
+            "-lncurses",
+        ],
+        "//tensorflow:ios": [
+            "-lm",
+            "-lpthread",
+        ],
+	# linux
+        "//conditions:default": [
+            "-lm",
+            "-lpthread",
+            "-lrt",
+            "-lncurses",
+	    "-luuid",
+        ],
+    }),
 )
